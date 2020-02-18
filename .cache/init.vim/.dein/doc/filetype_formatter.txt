@@ -1,0 +1,166 @@
+*filetype_formatter.txt* A simple, functional Vim code formatter plugin
+
+Author: Samuel Roeca
+
+Table of Contents                                         *filetype-formatter*
+
+1. Introduction .......................... |vim-filetype-formatter-intro|
+2. Configuration ......................... |vim-filetype-formatter-configuration|
+3. Commands .............................. |vim-filetype-formatter-commands|
+4. Mappings .............................. |vim-filetype-formatter-mappings|
+5. Credits ............................... |vim-filetype-formatter-credits|
+
+==============================================================================
+1. INTRODUCTION                                     *filetype-formatter-intro*
+
+The |vim-filetype-formatter| plugin simply applies command line code
+formatters to your Vim buffer. It assumes:
+
+1. Your Vim buffer has a filetype
+2. You have associated a qualifying system command with your filetype
+
+Code formatters are provided as system commands. A system command is
+compatible with this plugin if it:
+
+1. Takes its formatter input from standard input
+2. Writes its formatted output to standard output
+3. Is in your PATH. Vim-filetype-formatter uses code formatters; it does not
+   install them.
+
+Most code formatters will be compatible with this plugin. If they are not, you
+should submit a PR to the formatter's project; any well-designed code
+formatter should be able to meet these minimal requirements.
+
+This plugin assumes you have Bash installed and available at /bin/bash.
+
+==============================================================================
+2. CONFIGURATION                            *filetype-formatter-configuration*
+
+                                             *g:vim_filetype_formatter_commands*
+g:vim_filetype_formatter_commands~
+
+Type: Dictionary[String, Union[String, F]]
+      F:
+        Function(Integer, Integer) -> String |
+        Function() -> String
+Default: g:filetype_formatter#ft#defaults
+
+Assume you have several theoretical filetypes: 'dog', 'cat', 'bat', and 'rat'.
+With these theoretical filetypes, you have some command line code formatting
+programs: 'dog-fmt', 'cat-fmt', 'bat-fmt', and 'rat-fmt'. To enable the
+relevant code formatters to run on each filetype, you might configure this
+option as follows: >
+
+  let g:vim_filetype_formatter_commands = {
+      \ 'dog': 'dog-fmt --stdout -',
+      \ 'cat': 'cat-fmt --standard-out --std-in',
+      \ 'bat': {start, end -> printf('bat-fmt --lines=%d-%d', start, end)},
+      \ 'rat': {-> printf('rat-fmt --stdin-file=%s', expand('%:p'))},
+      \ }
+<
+
+If your Dictionary value is a String, it is assumed to operate over an entire
+file / buffer.
+
+If your Dictionary value is a Function that takes 0 arguments, it may require
+some runtime functionality to format your string command, but it's assumed
+that the formatter is not aware of visually-selected ranges.
+
+If your Dictionary value is a Function that takes two arguments, these should
+be the starting line and the ending line from your range selection. In this
+case, the formatter itself will operate over the entire file but only format
+from "start line" to "end line". This is good because only running the
+formatter on selected text can be breakable without the text's broader
+context. If a formatter provides a range interface, it's a good idea to use
+it!
+
+                                             *g:vim_filetype_formatter_verbose*
+g:vim_filetype_formatter_verbose~
+
+Type: Boolean (or Integer, Vim doesn't care)
+Default: 0 (for False)
+
+This plugin follows the "Rule of Silence" from "The Art of Unix Programming".
+This means that unsurprising messages are not given to the user. This mode
+echos a confirmation the user that a command ran successfully. To enable it,
+set this option to anything other than Zero: >
+
+  let g:vim_filetype_formatter_verbose = 1
+<
+
+                                     *g:vim_filetype_formatter_ft_no_defaults*
+g:vim_filetype_formatter_ft_no_defaults~
+
+Type: List[String]
+Default: []
+
+Contains a list of filetype strings for which the user wants no default values
+configured. This is useful if you don't like the default formatter but don't
+have an alternative formatter in mind.
+
+If you specify values in this list, they are only removed from the defaults.
+Any filetypes configured in g:vim_filetype_formatter_commands will NOT be
+overridden by this configuration. >
+
+  let g:vim_filetype_formatter_ft_no_defaults = ['markdown', 'javascript']
+<
+
+                                         *g:filetype_formatter#ft#formatters*
+g:filetype_formatter#ft#formatters~
+
+Type: Dict[String, Dict[String, F]]
+Default: Created by this plugin. DON'T EDIT
+
+Variable containing pre-written commands for different code formatters that
+we're aware of. For example, if you want to use "yapf" instead of "black" for
+Python, place the following in your vimrc: >
+
+  let g:vim_filetype_formatter_commands = {
+      \ 'python': g:filetype_formatter#ft#formatters['python']['yapf'],
+      \ }
+<
+                                         *g:filetype_formatter#ft#defaults*
+g:filetype_formatter#ft#defaults~
+
+Type: Dict[String, F]
+Default: Created by this plugin. DON'T EDIT
+
+A variable containing the default, pre-written commands assigned to each
+Filetype. Don't edit.
+
+==============================================================================
+3. COMMANDS                                      *filetype-formatter-commands*
+
+:FiletypeFormat                                               *:FiletypeFormat*
+  Format the entire current buffer using a configured formatter. If the
+  buffer's filetype has not been associated with this plugin, it will save an
+  error message accessible through :ErrorFiletypeFormat.
+
+  NOTE: this command works on both the entire file and visually selected
+  ranges. As described elsewhere in this document, for visually selected
+  ranges, behavior depends on whether a filetype's formatter is a "String", a
+  "Function[] -> String", or a "Function[Integer, Integer] -> String".
+
+:LogFiletypeFormat                                         *:LogFiletypeFormat*
+  Print output from a buffer's most recent formatter function attempt to the
+  console.
+
+==============================================================================
+4. MAPPINGS                                      *filetype-formatter-mappings*
+
+This plugin does not provide key mappings; please add your own! My recommended
+mappings: >
+
+  nnoremap <leader>f :FiletypeFormat<cr>
+  vnoremap <leader>f :FiletypeFormat<cr>
+<
+
+==============================================================================
+5. CREDITS                                       *filetype-formatter-credits*
+
+Special thanks to Chiel ten Brinke for designing vim-autoformat. This plugin
+was initially inspired by that interface and simplifies / cleans up a lot of
+aspects of that plugin I thought should be changed. Hopefully this plugin
+helps more Vim users get the most out of their command line formatters.
+
+vim:tw=78:ts=8:ft=help:norl:

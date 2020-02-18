@@ -1,0 +1,192 @@
+*deol.txt*	Dark powered shell interface for NeoVim.
+
+Version: 0.1
+Author:  Shougo <Shougo.Matsu at gmail.com>
+License: MIT license
+
+CONTENTS						*deol-contents*
+
+Introduction		|deol-introduction|
+Usage			|deol-usage|
+Install			|deol-install|
+Examples		|deol-examples|
+Interface		|deol-interface|
+  Commands		  |deol-commands|
+  Options		  |deol-options|
+  Variables		  |deol-variables|
+  Key mappings		  |deol-key-mappings|
+FAQ			|deol-faq|
+
+==============================================================================
+INTRODUCTION						*deol-introduction*
+
+==============================================================================
+USAGE							*deol-usage*
+
+==============================================================================
+INSTALL							*deol-install*
+
+==============================================================================
+EXAMPLES						*deol-examples*
+
+==============================================================================
+INTERFACE						*deol-interface*
+
+------------------------------------------------------------------------------
+COMMANDS 						*deol-commands*
+
+:Deol [{command}] [{options}]				*:Deol*
+	Create deol buffer using {command}.
+	If deol buffer exists in the current tab, will switch to the buffer.
+
+:DeolCd {directory}					*:DeolCd*
+	Change deol buffer directory to {directory}.
+
+:DeolEdit						*:DeolEdit*
+	Open deol edit buffer.
+	You can edit and execute the deol command line in the buffer.
+	The buffer filetype is "zsh" and you can use Vim auto completion
+	feature.
+	Note: deoplete + deoplete-zsh is recommended.
+	https://github.com/Shougo/deoplete.nvim
+	https://github.com/zchee/deoplete-zsh
+
+------------------------------------------------------------------------------
+OPTIONS							*deol-options*
+
+							*deol-options-command*
+ -command
+		Execute the command.
+
+		Default: Use 'shell' value
+
+							*deol-options-cwd*
+ -cwd={directory}
+		Current directory.
+
+		Default: Use |getcwd()| value
+
+							*deol-options-edit*
+ -edit
+ 		Open edit buffer in default.
+
+						*deol-options-edit-filetype*
+ -edit-filetype
+ 		Specify 'filetype' in edit buffer.
+
+							*deol-options-split*
+ -split={direction}
+		Specify the split direction.
+
+		"": No split
+		"floating": Use neovim floating window feature
+		"vertical": Split buffer vertically
+		otherwise: Split buffer horizontally
+
+		Default: ""
+
+						*deol-options-start-insert*
+ -start-insert
+		Start the insert mode in deol buffer.
+
+		Default: "true"
+
+------------------------------------------------------------------------------
+VARIABLES 						*deol-variables*
+
+g:deol#enable_dir_changed			*g:deol#enable_dir_changed*
+
+	This variable controls to automatically follow DirChanged event.
+	Note: It is only available for deol buffer.
+
+	Default: 1
+
+g:deol#prompt_pattern				*g:deol#prompt_pattern*
+
+	Sets the pattern which matches the shell prompt.
+	Note: The right prompt is not supported.
+>
+		let g:deol#prompt_pattern = '% \|%$'
+
+g:deol#shell_history_max			*g:deol#shell_history_max*
+
+	Max history of external shell history.
+	It is only used when |g:deol#shell_history_path| is set.
+
+	Default: 500
+
+g:deol#shell_history_path			*g:deol#shell_history_path*
+
+	The external shell history path.
+	If it is set, the external histories are loaded in deol edit buffer.
+
+	Default: ""
+
+------------------------------------------------------------------------------
+KEY MAPPINGS 						*deol-key-mappings*
+
+						*<Plug>(deol_edit)*
+<Plug>(deol_edit)
+		Open the edit buffer.
+		Note: |g:deol#prompt_pattern| must be set.
+
+<Plug>(deol_execute_line)			*<Plug>(deol_execute_line)*
+		Execute the command line.
+		Note: |g:deol#prompt_pattern| must be set.
+
+						*<Plug>(deol_previous_prompt)*
+<Plug>(deol_previous_prompt)
+		Move to previous prompt from cursor.
+		Note: |g:deol#prompt_pattern| must be set.
+
+<Plug>(deol_next_prompt)			*<Plug>(deol_next_prompt)*
+		Move to next prompt from cursor.
+		Note: |g:deol#prompt_pattern| must be set.
+
+						*<Plug>(deol_paste_prompt)*
+<Plug>(deol_paste_prompt)
+		Paste the history to the command line.
+		Note: |g:deol#prompt_pattern| must be set.
+
+						*<Plug>(deol_bg)*
+<Plug>(deol_bg)
+		Create new deol buffer instead.
+
+						*deol-default_key_mappings*
+{lhs}			{rhs}
+--------		-----------------------------
+<CR>			<Plug>(deol_execute_line)
+<C-p>			<Plug>(deol_previous_prompt)
+<C-n>			<Plug>(deol_next_prompt)
+<C-y>			<Plug>(deol_paste_prompt)
+<C-z>			<Plug>(deol_bg)
+e			<Plug>(deol_edit)
+
+==============================================================================
+FAQ							*deol-faq*
+
+Q: How to donate money to you?
+
+A: I don't get the donation, but if you want to donate, please support neovim
+project.  My plugins depends on neovim development.
+
+https://salt.bountysource.com/teams/neovim
+
+Q: What is the difference neoterm and deol.nvim?
+
+A: neoterm is specialized for interpreter execution in the buffer.
+deol.nvim is specialized for shell environment in each tab.
+
+Q: How to exit terminal mode in deol buffer?
+
+A: Press |CTRL-\_CTRL-N| key or map <ESC> key.
+>
+	tnoremap <ESC>   <C-\><C-n>
+<
+Q: I want to use current buffer directory.
+
+A: >
+	execute 'Deol' '-cwd='.fnamemodify(expand('%'), ':h')
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:noet:fen:
