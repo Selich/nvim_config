@@ -1,8 +1,15 @@
 " Specify a directory for plugins
 call plug#begin('~/.vim/plugged')
 
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'arcticicestudio/nord-vim'
+Plug 'rhysd/vim-gfm-syntax'
+
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
+
+
+
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
@@ -18,6 +25,12 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'liuchengxu/vista.vim'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'scrooloose/nerdcommenter'
+
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': './install.sh'
+    \ }
+
 
 Plug 'neovimhaskell/haskell-vim'
 
@@ -252,3 +265,13 @@ map <Leader>lb :call LanguageClient#textDocument_references()<CR>
 map <Leader>la :call LanguageClient#textDocument_codeAction()<CR>
 map <Leader>ls :call LanguageClient#textDocument_documentSymbol()<CR>
 
+set rtp+=~/.vim/pack/XXX/start/LanguageClient-neovim
+let g:LanguageClient_serverCommands = { 'haskell': ['hie-wrapper', '--lsp'] }
+
+let g:LanguageClient_rootMarkers = ['*.cabal', 'stack.yaml']
+
+let g:gfm_syntax_enable_always = 0
+let g:gfm_syntax_enable_filetypes = ['markdown.gfm']
+autocmd BufRead,BufNew,BufNewFile README.md setlocal ft=markdown.gfm
+
+let g:vim_markdown_folding_disabled = 1
