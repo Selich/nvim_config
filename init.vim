@@ -5,7 +5,15 @@ Plug 'arcticicestudio/nord-vim'
 Plug 'rhysd/vim-gfm-syntax'
 
 Plug 'godlygeek/tabular'
+Plug 'w0rp/ale'
 Plug 'plasticboy/vim-markdown'
+
+
+Plug 'tyru/open-browser-github.vim'
+Plug 'tyru/open-browser.vim'
+Plug 'tpope/vim-commentary'
+Plug 'neomake/neomake'
+Plug 'alx741/vim-hindent'
 
 
 
@@ -15,16 +23,17 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'ryanoasis/vim-devicons'
 Plug 'airblade/vim-gitgutter'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'scrooloose/nerdcommenter'
 "Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
+Plug 'benmills/vimux'
 
+Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
 Plug 'liuchengxu/vista.vim'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'scrooloose/nerdcommenter'
+Plug 'ctrlpvim/ctrlp.vim'
 
 Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
@@ -53,6 +62,15 @@ inoremap jk <ESC>
 nmap <C-n> :NERDTreeToggle<CR>
 vmap ++ <plug>NERDCommenterToggle
 nmap ++ <plug>NERDCommenterToggle
+
+let g:ctrlp_map = '<c-p>'
+autocmd BufReadPost * if @% !~# '\.git[\/\\]COMMIT_EDITMSG$' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+
+" standard-prettier
+let g:ale_fixers = {'javascript': ['standard'], 'json': ['jq']}
+let g:ale_linters = {'javascript': ['standard'],'CloudFormation' : ['cfn-lint']}
+let g:ale_sign_column_alwayus = 1
+
 
 " open NERDTree automatically
 "autocmd StdinReadPre * let s:std_in=1
@@ -247,6 +265,10 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 
 
+""""""""""""""""""""""""""""""""""""""""""
+" Haskell config
+""""""""""""""""""""""""""""""""""""""""""
+
 let g:haskell_enable_quantification = 1   " to enable highlighting of `forall`
 let g:haskell_enable_recursivedo = 1      " to enable highlighting of `mdo` and `rec`
 let g:haskell_enable_arrowsyntax = 1      " to enable highlighting of `proc`
@@ -275,3 +297,23 @@ let g:gfm_syntax_enable_filetypes = ['markdown.gfm']
 autocmd BufRead,BufNew,BufNewFile README.md setlocal ft=markdown.gfm
 
 let g:vim_markdown_folding_disabled = 1
+
+
+function! RunGhci(type)
+    call VimuxRunCommand(" stack ghci && exit")
+    if a:type
+        call VimuxSendText(":l " . bufname("%"))
+        call VimuxSendKeys("Enter")
+    endif
+endfunction
+
+au FileType haskell nmap <silent><buffer> <leader>gh :call RunGhci(1)<CR>
+au FileType haskell nmap <silent><buffer> <leader>gs :call RunGhci(0)<CR>
+
+let g:hindent_on_save = 1
+let g:hindent_line_length = 80
+let g:hindent_indent_size = 4
+
+au FileType haskell nmap <silent><buffer> g<space> vii<ESC>:silent!'<,'> EasyAlign /->/<CR>
+
+""""""""""""""""""""""""""""""""""""""""""
