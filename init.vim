@@ -6,6 +6,18 @@ Plug 'rhysd/vim-gfm-syntax'
 Plug 'godlygeek/tabular'
 Plug 'w0rp/ale'
 Plug 'plasticboy/vim-markdown'
+Plug 'tpope/vim-fugitive'
+
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'mxw/vim-jsx'
+Plug 'jiangmiao/auto-pairs'
+Plug 'pangloss/vim-javascript'
+Plug 'ap/vim-css-color'
+Plug 'luochen1990/rainbow'
+
+
+Plug 'mhartington/oceanic-next'
+Plug 'kristijanhusak/vim-hybrid-material'
 
 Plug 'OmniSharp/omnisharp-vim'
 Plug 'tyru/open-browser-github.vim'
@@ -33,6 +45,8 @@ Plug 'autozimu/LanguageClient-neovim', {
     \ 'do': './install.sh'
     \ }
 
+Plug 'janko/vim-test'
+
 Plug 'neovimhaskell/haskell-vim'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'morhetz/gruvbox'
@@ -40,9 +54,9 @@ Plug 'HerringtonDarkholme/yats.vim' " TS Syntax
 
 call plug#end()
 
+
 syntax on
 filetype plugin indent on
-colorscheme nord
 set noswapfile
 set nowritebackup
 set hidden
@@ -54,11 +68,25 @@ set cindent
 set tabstop=2
 set shiftwidth=2
 set expandtab
+"colorscheme nord
+"colorscheme OceanicNext
+set background=dark
+colorscheme hybrid_material
+let g:airline_theme = "hybrid"
+let g:enable_bold_font = 1
+let g:enable_italic_font = 1
+
 
 inoremap jk <ESC>
 nmap <C-n> :NERDTreeToggle<CR>
 vmap ++ <plug>NERDCommenterToggle
 nmap ++ <plug>NERDCommenterToggle
+
+nmap <silent> t<C-n> :TestNearest<CR>
+nmap <silent> t<C-f> :TestFile<CR>
+nmap <silent> t<C-s> :TestSuite<CR>
+nmap <silent> t<C-l> :TestLast<CR>
+nmap <silent> t<C-g> :TestVisit<CR>
 
 let g:ctrlp_map = '<c-p>'
 autocmd BufReadPost * if @% !~# '\.git[\/\\]COMMIT_EDITMSG$' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
@@ -85,7 +113,7 @@ let g:coc_global_extensions = [
   \ 'coc-snippets',
   \ 'coc-pairs',
   \ 'coc-tsserver',
-  \ 'coc-eslint', 
+  \ 'coc-eslint',
   \ 'coc-prettier', 
   \ 'coc-json', 
   \ 'coc-clangd', 
@@ -209,10 +237,6 @@ map <Leader>la :call LanguageClient#textDocument_codeAction()<CR>
 map <Leader>ls :call LanguageClient#textDocument_documentSymbol()<CR>
 
 set rtp+=~/.vim/pack/XXX/start/LanguageClient-neovim
-let g:LanguageClient_serverCommands = { 'haskell': ['hie-wrapper', '--lsp'] }
-
-let g:LanguageClient_rootMarkers = ['*.cabal', 'stack.yaml']
-
 let g:gfm_syntax_enable_always = 0
 let g:gfm_syntax_enable_filetypes = ['markdown.gfm']
 autocmd BufRead,BufNew,BufNewFile README.md setlocal ft=markdown.gfm
