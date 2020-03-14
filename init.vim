@@ -1,19 +1,32 @@
 call plug#begin('~/.vim/plugged')
 
-Plug 'arcticicestudio/nord-vim'
 Plug 'rhysd/vim-gfm-syntax'
 
 Plug 'godlygeek/tabular'
 Plug 'w0rp/ale'
 Plug 'plasticboy/vim-markdown'
 Plug 'tpope/vim-fugitive'
+Plug 'szymonmaszke/vimpyter' 
+
+
+Plug 'ptzz/lf.vim'
+
+Plug 'rbgrouleff/bclose.vim'
+
 
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'mxw/vim-jsx'
 Plug 'jiangmiao/auto-pairs'
 Plug 'pangloss/vim-javascript'
 Plug 'ap/vim-css-color'
+Plug 'junegunn/vim-github-dashboard'
 Plug 'luochen1990/rainbow'
+Plug 'arcticicestudio/nord-vim'
+
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': './install.sh'
+    \ }
 
 
 Plug 'mhartington/oceanic-next'
@@ -31,8 +44,9 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'ryanoasis/vim-devicons'
 Plug 'airblade/vim-gitgutter'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+Plug 'itchyny/lightline.vim'
+"Plug 'vim-airline/vim-airline'
+"Plug 'vim-airline/vim-airline-themes'
 Plug 'benmills/vimux'
 Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
 Plug 'liuchengxu/vista.vim'
@@ -72,7 +86,7 @@ set expandtab
 "colorscheme OceanicNext
 set background=dark
 colorscheme hybrid_material
-let g:airline_theme = "hybrid"
+"let g:airline_theme = "hybrid"
 let g:enable_bold_font = 1
 let g:enable_italic_font = 1
 
@@ -210,13 +224,23 @@ nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
 nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
 
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#formatter = 'unique_tail'
+"let g:airline#extensions#tabline#enabled = 1
+"let g:airline#extensions#tabline#formatter = 'unique_tail'
 
 
 """"""""""""""""""""""""""""""""""""""""""
 " Haskell config
 """"""""""""""""""""""""""""""""""""""""""
+
+set rtp+=~/.vim/pack/XXX/start/LanguageClient-neovim
+let g:LanguageClient_serverCommands = { 'haskell': ['hie-wrapper', '--lsp'] }
+let g:LanguageClient_rootMarkers = ['*.cabal', 'stack.yaml']
+
+
+hi link ALEError Error
+hi Warning term=underline cterm=underline ctermfg=Yellow gui=undercurl guisp=Gold
+hi link ALEWarning Warning
+hi link ALEInfo SpellCap
 
 let g:haskell_enable_quantification = 1 
 let g:haskell_enable_recursivedo = 1
@@ -310,5 +334,15 @@ nnoremap <Leader>sp :OmniSharpStopServer<CR>
 
 let g:OmniSharp_want_snippet=1
 
+""""""""""""""""""""""""""""""""
+" Jupyter Notebook
+""""""""""""""""""""""""""""""""
 
+autocmd Filetype ipynb nmap <silent><Leader>b :VimpyterInsertPythonBlock<CR>
+autocmd Filetype ipynb nmap <silent><Leader>j :VimpyterStartJupyter<CR>
+autocmd Filetype ipynb nmap <silent><Leader>n :VimpyterStartNteract<CR>
+
+
+let g:NERDTreeHijackNetrw = 0
+let g:lf_replace_netrw = 1 
 
